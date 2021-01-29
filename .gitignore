@@ -29,3 +29,6 @@ spring_app_log_file.log
 
 ### VS Code ###
 .vscode/
+/src/bin/
+
+/logs/
