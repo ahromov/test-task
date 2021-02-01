@@ -59,11 +59,7 @@ public class AdminController {
     public String postApprove(@RequestParam(required = true, defaultValue = "") Long postId,
                               @RequestParam(required = true, defaultValue = "") String action,
                               Model model) {
-        Optional<Post> post = postService.findById(postId);
-        if (post.isPresent() && action.equals("approve")) {
-            post.get().setStatus(true);
-            postService.save(post.get());
-        }
+        postService.postApprove(postId, action);
         return userList(model);
     }
 

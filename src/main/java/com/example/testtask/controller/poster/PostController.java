@@ -43,28 +43,23 @@ public class PostController {
     }
 
     @GetMapping("/post/{postId}")
-    public String getPostById(@PathVariable("postId") Long postId, Model model) {
+    public String editPost(@PathVariable("postId") Long postId, Model model) {
         model.addAttribute("post", postService.findById(postId));
         return "poster";
     }
 
     @PostMapping("/post/edit")
-    public String getPostById(@RequestParam(required = true) Long postId,
-                              @RequestParam(required = true) String title,
-                              @RequestParam(required = true) String body,
-                              @RequestParam(required = true) String action,
-                              Model model) {
-        Optional<Post> post = postService.findById(postId);
-        if (post.isPresent() && action.equals("edit")) {
-            post.get().setTitle(title);
-            post.get().setBody(body);
-            postService.save(post.get());
-            model.addAttribute("id", post.get().getId());
-            model.addAttribute("title", post.get().getTitle());
-            model.addAttribute("body", post.get().getBody());
-            model.addAttribute("createdAt", post.get().getCreatedAt());
-            model.addAttribute("status", post.get().isStatus());
-        }
+    public String editPost(@RequestParam(required = true) Long postId,
+                           @RequestParam(required = true) String title,
+                           @RequestParam(required = true) String body,
+                           @RequestParam(required = true) String action,
+                           Model model) {
+        Post post = postService.editPost(postId, title, body, action);
+        model.addAttribute("id", post.getId());
+        model.addAttribute("title", post.getTitle());
+        model.addAttribute("body", post.getBody());
+        model.addAttribute("createdAt", post.getCreatedAt());
+        model.addAttribute("status", post.isStatus());
         return "redirect:/poster";
     }
 }

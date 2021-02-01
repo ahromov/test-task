@@ -34,12 +34,15 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public String addUser(@ModelAttribute("userForm") @Validated User userForm, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors())
-            return "registration";
-        if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
-            model.addAttribute("passwordError", "Passwords is not equals");
-            return "registration";
-        }
+        String view = validate(userForm, bindingResult, model);
+        if (view != null) return view;
+        view = registrate(userForm, model);
+        if (view != null) return view;
+        model.addAttribute("usernameError", "User with same name exists");
+        return "registration";
+    }
+
+    private String registrate(User userForm, Model model) {
         User user = userService.saveUser(userForm);
         if (user != null) {
             switch (user.getRoles().iterator().next().getName()) {
@@ -60,10 +63,18 @@ public class RegistrationController {
                     model.addAttribute("search", new SearchDTO());
                     return "visitor";
                 }
-                default -> { return "redirect:/home";}
             }
         }
-        model.addAttribute("usernameError", "User with same name exists");
-        return "registration";
+        return "home";
+    }
+
+    private String validate(User userForm, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors())
+            return "registration";
+        if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
+            model.addAttribute("passwordError", "Passwords is not equals");
+            return "registration";
+        }
+        return null;
     }
 }
